@@ -11,6 +11,7 @@ import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.impl.DefaultDSLContext;
 import org.jooq.impl.DefaultExecuteListenerProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -62,13 +63,17 @@ public class Application {
 	}
 
 	@Bean
-	public org.jooq.Configuration jooqConfig(ConnectionProvider connectionProvider,
-			TransactionProvider transactionProvider, ExecuteListenerProvider executeListenerProvider) {
+	public org.jooq.Configuration jooqConfig(
+			ConnectionProvider connectionProvider,
+			TransactionProvider transactionProvider,
+			ExecuteListenerProvider executeListenerProvider,
+			@Value("${jooq.sql.dialect}") String dialect
+	) {
 
 		return new DefaultConfiguration() //
 				.derive(connectionProvider) //
 				.derive(transactionProvider) //
 				.derive(executeListenerProvider) //
-				.derive(SQLDialect.H2);
+				.derive(SQLDialect.valueOf(dialect));
 	}
 }
